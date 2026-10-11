@@ -1,0 +1,42 @@
+# Node & Vite dependencies
+node_modules/
+code-pro/node_modules/
+dist/
+code-pro/dist/
+
+# Firebase Admin SDK Credentials (CRITICAL: DO NOT COMMIT PRIVATE KEYS)
+*firebase-adminsdk*.json
+**/*firebase-adminsdk*.json
+serviceAccountKey*.json
+**/serviceAccountKey*.json
+
+# Sample dump screenshots
+dump/
+*.png
+*.jpg
+*.jpeg
+
+# Python byte code & cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+
+# Environment and sensitive keys
+.env
+.env.*
+**/.env
+**/.env.*
+!.env.example
+!**/.env.example
+*.log
+
+# IDE & Tool caches
+.vscode/
+.idea/
+.oxlintrc.json
+.DS_Store
