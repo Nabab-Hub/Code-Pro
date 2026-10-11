@@ -24,6 +24,8 @@ __pycache__/
 .Python
 env/
 venv/
+.venv/
+**/.venv/
 ENV/
 
 # Environment and sensitive keys

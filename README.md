@@ -87,12 +87,14 @@ The web dashboard will be available at:
 
 ### Step 2: Run the Python Bot (`code-bot`)
 
-Open a second terminal window:
+Simply double-click **`run.bat`** inside `code-bot/`, or run:
 
 ```powershell
-cd c:\Users\skahi\Downloads\Code-Pro\code-bot
-python bot.py
+cd code-bot
+.\run.bat
 ```
+*(On the first run, `run.bat` automatically creates a virtual environment `.venv` and installs all dependencies. On subsequent runs, it starts instantly via `.venv`!)*
+
 
 You will see the continuous daemon output:
 ```
