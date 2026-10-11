@@ -56,7 +56,7 @@ Return ONLY valid JSON.`;
     const key = GEMINI_KEYS[k];
     for (let m = 0; m < CANDIDATE_MODELS.length; m++) {
       const model = CANDIDATE_MODELS[m];
-      const url = `https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key=${key}`;
+      const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${key}`;
 
       try {
         const response = await fetch(url, {
