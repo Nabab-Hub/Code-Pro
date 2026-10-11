@@ -2,6 +2,15 @@ import os
 import sys
 import time
 from datetime import datetime
+
+# Ensure Windows console supports UTF-8 characters and emojis
+if sys.platform == "win32":
+    try:
+        sys.stdout.reconfigure(encoding="utf-8")
+        sys.stderr.reconfigure(encoding="utf-8")
+    except Exception:
+        pass
+
 from config import GEMINI_API_KEYS
 from firebase_client import (
     get_bot_status,
