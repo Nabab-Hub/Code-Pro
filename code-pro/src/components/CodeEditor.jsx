@@ -1,11 +1,10 @@
 import React, { useState } from "react";
 import Editor from "@monaco-editor/react";
-import { Copy, Check, RotateCcw, Code, Lock, Unlock } from "lucide-react";
+import { Copy, Check, RotateCcw, Code, Eye } from "lucide-react";
 
-export default function CodeEditor({ code, language, onChange, onReset }) {
+export default function CodeEditor({ code, language, onReset }) {
   const [copied, setCopied] = useState(false);
   const [currentLang, setCurrentLang] = useState(language || "cpp");
-  const [isReadOnly, setIsReadOnly] = useState(true); // Read-only by default to prevent mobile keyboard popups
 
   // Keep internal language synced when question changes
   React.useEffect(() => {
@@ -38,6 +37,38 @@ export default function CodeEditor({ code, language, onChange, onReset }) {
     return "cpp";
   };
 
+  const handleEditorDidMount = (editor, monaco) => {
+    // 1. Prevent click/pointer events from placing blinking cursor or focusing
+    editor.onMouseDown((e) => {
+      e.event.preventDefault();
+      e.event.stopPropagation();
+      // Ensure active element blurs so no keyboard can ever show
+      if (document.activeElement && document.activeElement.blur) {
+        document.activeElement.blur();
+      }
+    });
+
+    const domNode = editor.getDomNode();
+    if (domNode) {
+      // 2. Prevent focus-in anywhere inside the editor
+      domNode.addEventListener("focusin", (e) => {
+        if (e.target && e.target.blur) {
+          e.target.blur();
+        }
+      });
+
+      // 3. Neutralize all Monaco hidden textareas (root cause of mobile keyboards)
+      const textareas = domNode.querySelectorAll("textarea");
+      textareas.forEach((ta) => {
+        ta.setAttribute("inputmode", "none");
+        ta.setAttribute("readonly", "true");
+        ta.setAttribute("tabindex", "-1");
+        ta.style.pointerEvents = "none";
+        ta.addEventListener("focus", () => ta.blur());
+      });
+    }
+  };
+
   return (
     <div className="editor-wrapper">
       <div className="editor-toolbar">
@@ -57,23 +88,13 @@ export default function CodeEditor({ code, language, onChange, onReset }) {
             <option value="go">Go</option>
           </select>
 
-          {/* Read-Only Status & Toggle */}
-          <button
-            onClick={() => setIsReadOnly(!isReadOnly)}
-            className="btn btn-secondary btn-sm"
-            style={{ fontSize: "0.75rem", padding: "0.25rem 0.5rem" }}
-            title={isReadOnly ? "Editor is Read-Only (Safe for mobile). Click to allow typing." : "Click to lock editor as Read-Only"}
+          {/* Clean View-Only Badge (Non-clickable) */}
+          <span
+            className="badge-view-only"
+            title="Read-only display mode. Tap and scroll smoothly without keyboard popups."
           >
-            {isReadOnly ? (
-              <>
-                <Lock size={12} color="#10b981" /> <span className="btn-label-desktop">Read Only</span>
-              </>
-            ) : (
-              <>
-                <Unlock size={12} color="#f59e0b" /> <span className="btn-label-desktop">Editing</span>
-              </>
-            )}
-          </button>
+            <Eye size={12} color="#10b981" /> View Mode
+          </span>
         </div>
 
         <div className="editor-toolbar-right">
@@ -105,24 +126,42 @@ export default function CodeEditor({ code, language, onChange, onReset }) {
         </div>
       </div>
 
-      <div className="editor-container">
+      <div
+        className="editor-container non-clickable-editor"
+        onClick={(e) => {
+          // Immediately blur any active element if tapped
+          if (document.activeElement && document.activeElement.blur) {
+            document.activeElement.blur();
+          }
+        }}
+      >
         <Editor
           height="100%"
           language={getMonacoLang(currentLang)}
           value={code || "// No code available"}
           theme="vs-dark"
-          onChange={isReadOnly ? undefined : onChange}
+          onMount={handleEditorDidMount}
           options={{
-            readOnly: isReadOnly,
-            domReadOnly: isReadOnly, // Prevents mobile soft keyboard from opening on tap
+            readOnly: true,
+            domReadOnly: true,
+            cursorWidth: 0,
+            cursorStyle: "line",
+            renderLineHighlight: "none",
+            selectionHighlight: false,
+            occurrencesHighlight: false,
+            contextmenu: false,
+            links: false,
+            matchBrackets: "never",
+            selectOnLineNumbers: false,
+            glyphMargin: false,
+            folding: true,
+            lineNumbers: "on",
             fontSize: 14,
             fontFamily: "'Fira Code', Consolas, 'Courier New', monospace",
             minimap: { enabled: false },
             scrollBeyondLastLine: false,
             automaticLayout: true,
             tabSize: 4,
-            lineNumbers: "on",
-            renderLineHighlight: "all",
             smoothScrolling: true,
             padding: { top: 12, bottom: 12 }
           }}

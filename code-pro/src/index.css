@@ -492,6 +492,44 @@ body {
   min-height: 0;
 }
 
+.badge-view-only {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.75rem;
+  color: var(--accent-success);
+  background: rgba(16, 185, 129, 0.1);
+  border: 1px solid rgba(16, 185, 129, 0.25);
+  padding: 0.2rem 0.5rem;
+  border-radius: 6px;
+  font-weight: 500;
+  user-select: none;
+}
+
+/* Strictly non-clickable Monaco Editor: immune to mobile virtual keyboards */
+.non-clickable-editor {
+  user-select: text;
+  -webkit-user-select: text;
+}
+
+.non-clickable-editor .monaco-editor textarea.inputarea {
+  pointer-events: none !important;
+  user-select: none !important;
+  -webkit-user-select: none !important;
+  opacity: 0 !important;
+  display: none !important;
+}
+
+.non-clickable-editor .monaco-editor .cursors-layer,
+.non-clickable-editor .monaco-editor .cursor {
+  display: none !important;
+  visibility: hidden !important;
+}
+
+.non-clickable-editor .monaco-editor .view-lines {
+  cursor: default !important;
+}
+
 /* Chatbot Sidebar */
 .chat-sidebar {
   background: var(--bg-secondary);
